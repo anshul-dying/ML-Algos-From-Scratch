@@ -24,7 +24,7 @@ This project is designed for learning and understanding the underlying logic, in
 - [x] Logistic Regression
 - [x] Gaussian Determinant Analysis (GDA)
 - [x] Support Vector Machine (SVM)
-
+- [x] K-Nearest Neighbors
 
 ---
 
