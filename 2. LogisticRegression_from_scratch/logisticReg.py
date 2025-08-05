@@ -27,7 +27,7 @@ class LogisticRegression:
             new_weights[i] -= self.learning_rate * self.derivative(X, y, i)
         return new_weights
     
-    def fit(self, feature: np.array, target: np.array):
+    def fit(self, feature: np.ndarray, target: np.ndarray):
         if(feature.shape != target.shape):
             return f"No. of rows are not equal for X({feature.shape}) and y({target.shape})"
 

@@ -15,7 +15,7 @@ class LinearRegression:
             return weights[0] + weights[1]*x
 
         def derivative(X, y, idx):
-            derivative = 0
+            derivative = 0 
             for i in range(X.shape[0]):
                 if idx == 0:
                     derivative += (h_theta(X[i], self.weights) - y[i])
