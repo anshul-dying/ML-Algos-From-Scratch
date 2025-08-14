@@ -1,46 +1,72 @@
 import numpy  as np
 import pandas as pd
 
-class LinearRegression:
-    def __init__(self, learning_rate, iterations):
+class LinearBase:
+    def __init__(self, learning_rate=0.01, iterations=1000):
         self.learning_rate = learning_rate
         self.iterations    = iterations
-    
 
-    def fit(self, feature: np.array, target: np.array) -> list | str | int:
-        if(feature.shape != target.shape):
+    def fit(self, feature: np.ndarray, target: np.ndarray) -> list | str | int:
+        self.m, self.n = feature.shape
+        self.X = feature
+        self.y = target
+        if(feature.shape[0] != target.shape[0]):
             return f"No. of rows are not equal for X({feature.shape}) and y({target.shape})"
-    
-        def h_theta(x, weights:list):
-            return weights[0] + weights[1]*x
-
-        def derivative(X, y, idx):
-            derivative = 0 
-            for i in range(X.shape[0]):
-                if idx == 0:
-                    derivative += (h_theta(X[i], self.weights) - y[i])
-                else:
-                    derivative += (h_theta(X[i], self.weights) - y[i])*X[i]
-            return derivative / X.shape[0]
-
-        def gradientDescent(weights: list, X, y):
-            new_weights = weights.copy()
-            for i in range(len(weights)):
-                new_weights[i] -= self.learning_rate * derivative(X, y, i)
-            
-            return new_weights
         
-        self.weights = np.zeros(feature.ndim+1)
+        self.weights = np.zeros(self.n+1)
         for i in range(self.iterations):
-            self.weights = gradientDescent(self.weights, feature, target)
+            self._gradientDescent(feature, target)
         
         return self.weights
-    
-    def predict(self, X: np.array) -> np.array:
-        pred = []
 
+    def _h_theta(self, x):
+        x_with_bias = np.insert(x, 0, 1)
+        return self.weights@x_with_bias
+
+    def _derivative(self, idx):
+        derivative = 0 
+        for i in range(self.m):
+            if idx == 0:
+                derivative += (self._h_theta(self.X[i]) - self.y[i])
+            else:
+                derivative += (self._h_theta(self.X[i]) - self.y[i])*self.X[i, idx-1]
+        return derivative / self.m
+
+    def _gradientDescent(self, X, y):
+        for j in range(len(self.weights)):
+            self.weights[j] -= self.learning_rate * self._derivative(j)
+
+    
+    def predict(self, X: np.ndarray) -> np.array:
+        pred = []
         for i in range(X.shape[0]):
-            pred.append(self.weights[0]+self.weights[1]*X[i])
-        
+            pred.append(self._h_theta(X[i]))
         return np.array(pred)
 
+class LinearRegression(LinearBase):
+    def __init__(self, learning_rate=0.01, iterations=1000):
+        super().__init__(learning_rate, iterations)
+
+    def fit(self, feature, target):
+        return super().fit(feature, target)
+        
+    def predict(self, X):
+        return super().predict(X)
+    
+class RidgeRegression(LinearBase):
+    def __init__(self, learning_rate=0.01, iterations=1000, alpha=1):
+        super().__init__(learning_rate, iterations)
+        self.alpha = alpha
+    
+    def _derivative(self, idx):
+        derivative = 0
+        for i in range(self.m):
+            if idx == 0:
+                derivative += (self._h_theta(self.X[i])-self.y[i])
+            else:
+                derivative += (self._h_theta(self.X[i])-self.y[i])*self.X[i, idx-1]
+
+        derivative = derivative / self.m
+        if idx != 0:
+            derivative += 2*(self.alpha/self.m)*(self.weights[idx]) 
+        return derivative

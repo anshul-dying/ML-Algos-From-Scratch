@@ -19,8 +19,8 @@ This project is designed for learning and understanding the underlying logic, in
 
 ### Regression
 - [x] Linear Regression
+- [x] Ridge Regression
 - [x] K-Nearest Neighbors
-
 ### Classification
 - [x] Logistic Regression
 - [x] Gaussian Determinant Analysis (GDA)
