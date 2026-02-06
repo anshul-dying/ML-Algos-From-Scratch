@@ -86,7 +86,7 @@ class RidgeRegression(LinearBase):
 
         derivative = derivative / self.m
         if idx != 0:
-            derivative += 2*(self.alpha/self.m)*(self.weights[idx]) 
+            derivative += 2*(self.alpha/self.m)*(self.weights[idx])
         return derivative
 
 
